@@ -136,6 +136,7 @@ Now, save and exit (`ctrl+o` then `ctrl+x` for nano). *If the app doesn't show u
 
 Using your preferred method (I like KRunner), launch the newly-created NBS desktop entry. The application should load while also running your script in the background, allowing for shortcut detection. I would also recommend adding your MIDI keyboard as a MIDI device in NBS, so that the normal keys work too.
 
+*Note: You might get a service crash error when you close Note Block Studio, but don't worry. This comes from the launch script cancelling in the background to avoid runaway processes.*
 
 ## Troubleshooting
 
