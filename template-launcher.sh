@@ -3,6 +3,9 @@
 
 trap 'kill $(jobs -p) 2>/dev/null' EXIT
 
+# Replace with the path to the .appimage of Note Block Studio
+APPIMAGE=/path/to/Minecraft.Note.Block.Studio.appimage
+
 # Function to click at certain coordinates and then move the mouse back to the initial position
 # Use this to press the on screen button when the control you want doesn't have a keyboard shortcut
 # click_target x y
@@ -36,8 +39,12 @@ click_target() {
 client_id=$(aseqdump -l | grep -i "$midi_controller_name" | awk '{print $1}' | cut -d: -f1 | head -n 1) # $midi_controller_name should be replaced with the name outputted from aseqdump -l
 
 if [ -z "$client_id" ]; then
-    echo "Error: MIDI Controller not found. Please ensure it is connected." >&2
-    exit 1
+    # No controller connected: open Note Block Studio anyway, just without MIDI controls
+    echo "MIDI controller not found: launching Note Block Studio without MIDI controls." >&2
+    if command -v notify-send >/dev/null; then
+        notify-send "Note Block Studio" "MIDI controller not found: launching without MIDI controls."
+    fi
+    exec "$APPIMAGE"
 fi
 
 midi_port="${client_id}:$port_id" # $port_id should be replaced with the desired port (the second number in client:port)
@@ -69,4 +76,4 @@ aseqdump -p "$midi_port" | {
     done
 } &
 
-/path/to/Minecraft.Note.Block.Studio.appimage # Replace with the path to the .appimage of Note Block Studio
+"$APPIMAGE"

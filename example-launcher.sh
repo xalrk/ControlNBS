@@ -3,6 +3,9 @@
 
 trap 'kill $(jobs -p) 2>/dev/null' EXIT
 
+# Path to the Note Block Studio .appimage
+APPIMAGE=/home/xalrk/Applications/Minecraft.Note.Block.Studio/Minecraft.Note.Block.Studio.appimage
+
 click_target() {
     local target_x=$1
     local target_y=$2
@@ -33,8 +36,12 @@ click_target() {
 client_id=$(aseqdump -l | grep -i "mpk mini" | awk '{print $1}' | cut -d: -f1 | head -n 1)
 
 if [ -z "$client_id" ]; then
-    echo "Error: MIDI Controller not found. Please ensure it is connected." >&2
-    exit 1
+    # No controller connected: open Note Block Studio anyway, just without MIDI controls
+    echo "MIDI controller not found: launching Note Block Studio without MIDI controls." >&2
+    if command -v notify-send >/dev/null; then
+        notify-send "Note Block Studio" "MIDI controller not found: launching without MIDI controls."
+    fi
+    exec "$APPIMAGE"
 fi
 
 midi_port="${client_id}:1"
@@ -171,4 +178,4 @@ aseqdump -p "$midi_port" | {
     done
 } &
 
-/home/xalrk/Applications/Minecraft.Note.Block.Studio/Minecraft.Note.Block.Studio.appimage
+"$APPIMAGE"
